@@ -37,6 +37,7 @@ CREATE TABLE `discount` (
 LOCK TABLES `discount` WRITE;
 /*!40000 ALTER TABLE `discount` DISABLE KEYS */;
 /*!40000 ALTER TABLE `discount` ENABLE KEYS */;
+INSERT INTO `discount` (`discount_code`, `discount_rate`) VALUES ('Student', 20), ('Child Under 10', 30), ('Pensioner', 40);
 UNLOCK TABLES;
 
 --
@@ -49,17 +50,8 @@ DROP TABLE IF EXISTS `reservation`;
 CREATE TABLE `reservation` (
   `id` int NOT NULL AUTO_INCREMENT,
   `wagon_id` int NOT NULL,
-  `route_id` int NOT NULL,
-  `station_from_id` int NOT NULL,
-  `station_to_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `reservation_wagon` (`wagon_id`),
-  KEY `reservation_route` (`route_id`),
-  KEY `station_from_id` (`station_from_id`),
-  KEY `station_to_id` (`station_to_id`),
-  CONSTRAINT `reservation_ibfk_1` FOREIGN KEY (`station_from_id`) REFERENCES `station` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reservation_ibfk_2` FOREIGN KEY (`station_to_id`) REFERENCES `station` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `reservation_route` FOREIGN KEY (`route_id`) REFERENCES `route` (`id`) ON DELETE CASCADE,
   CONSTRAINT `reservation_wagon` FOREIGN KEY (`wagon_id`) REFERENCES `wagon` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -191,9 +183,18 @@ CREATE TABLE `ticket` (
   `customer_email` varchar(100) NOT NULL,
   `discount_id` int DEFAULT NULL,
   `reservation_id` int DEFAULT NULL,
+  `route_id` int NOT NULL,
+  `station_from_id` int NOT NULL,
+  `station_to_id` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `ticket_discount` (`discount_id`),
   KEY `tickstationet_reservation` (`reservation_id`),
+  KEY `ticket_route` (`route_id`),
+  KEY `station_from_id` (`station_from_id`),
+  KEY `station_to_id` (`station_to_id`),
+  CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`station_from_id`) REFERENCES `station` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ticket_ibfk_2` FOREIGN KEY (`station_to_id`) REFERENCES `station` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `ticket_route` FOREIGN KEY (`route_id`) REFERENCES `route` (`id`) ON DELETE CASCADE,
   CONSTRAINT `ticket_discount` FOREIGN KEY (`discount_id`) REFERENCES `discount` (`id`) ON DELETE CASCADE,
   CONSTRAINT `tickstationet_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservation` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
